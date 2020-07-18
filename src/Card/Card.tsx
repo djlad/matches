@@ -9,11 +9,13 @@ import "./Card.css";
 export class Card extends React.Component<ICardProps, ICardState> {
   private suit: Suit = Suit.spades;
   private value: number = 1;
+  private backSrc: string = back;
   constructor(props: ICardProps) {
     super(props)
     this.state = {
       "imgSrc": ace_of_spades
     }
+    console.log(ace_of_spades);
   }
   
   private setSource(): void {
@@ -27,15 +29,10 @@ export class Card extends React.Component<ICardProps, ICardState> {
     return (<div className="flip-card">
       <div className="flip-card-inner">
         <div className="flip-card-front">
-          {/* <img src="{this.imgSrc}" alt="Avatar" style="width:300px;height:300px;"/> */}
-          <img src={this.state.imgSrc} alt="Avatar" className="flip-card-inner"/>
+          <img src={this.backSrc} alt="" className="flip-card-img"/>
         </div>
         <div className="flip-card-back">
-          <img src={back} alt="Avatar" className="flip-card-back"/>
-          {/* <h1>John Doe</h1> */}
-          {/* <p>Architect & Engineer</p> */}
-          {/* <p>We love that guy</p> */}
-          {/* <p>{this.state.imgSrc}</p> */}
+          <img src={this.state.imgSrc} alt="" className="flip-card-img"/>
         </div>
         </div>
     </div>)
