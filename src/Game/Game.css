@@ -1,4 +1,8 @@
 .card-container {
     float:left;
-    display:flex;
+    display: inline-block;
+    /* width: 10%; */
+    /* height: 10%; */
+    width: 100px;
+    height: 150px;
 }
