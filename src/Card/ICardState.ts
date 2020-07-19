@@ -1,3 +1,6 @@
+import { Suit } from "./Suit";
+
 export interface ICardState {
-  imgSrc: string; 
+  value: number;
+  suit: Suit;
 }

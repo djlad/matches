@@ -1,6 +1,7 @@
+import { CardState } from "./CardState";
 import { Suit } from "./Suit";
 
 export interface ICardProps {
-  value: number;
-  suit: Suit;
+  cardState: CardState;
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
