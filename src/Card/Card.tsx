@@ -2,11 +2,10 @@ import React from "react";
 import { Suit } from "./Suit";
 import { ICardState } from "./ICardState";
 import { ICardProps } from "./ICardProps";
-import ace_of_spades from "./CardImages/images/ace_of_spades.svg";
 import back from "./CardImages/images/back.svg";
 import "./Card.css";
 import { CardImages } from './CardImages/CardImages';
-import { CardState } from './CardState';
+import classNames from 'classnames/bind';
 
 export class Card extends React.Component<ICardProps, ICardState> {
   private suit: Suit = Suit.spades;
@@ -20,16 +19,22 @@ export class Card extends React.Component<ICardProps, ICardState> {
   }
   
   render() {
+    const classes: string = classNames("flip-card", {
+      "flip-it": this.props.cardState.faceUp
+    });
     return (
-    <div className="flip-card" onClick={this.props.onClick}>
-      <div className="flip-card-inner">
-        <div className="flip-card-front">
-          <img src={this.backSrc} alt="" className="flip-card-img"/>
+    <div className="card-container">
+        <div className={classes} onClick={this.props.onClick}>
+        <div className="flip-card-inner">
+          <div className="flip-card-front">
+            <img src={this.backSrc} alt="" className="flip-card-img"/>
+          </div>
+          <div className="flip-card-back">
+            <img src={this.cardImages.getImage(this.props.cardState.value, this.props.cardState.suit)} alt="" className="flip-card-img"/>
+          </div>
         </div>
-        <div className="flip-card-back">
-          <img src={this.cardImages.getImage(this.props.cardState.value, this.props.cardState.suit)} alt="" className="flip-card-img"/>
-        </div>
-        </div>
-    </div>)
+      </div>
+    </div>
+    )
   } 
 }
