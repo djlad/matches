@@ -15,23 +15,30 @@ export class Game extends React.Component<IGameProps, IGameState> {
     };
     let c = 0;
     let suits: Suit[] = [Suit.spades, Suit.diamonds, Suit.clubs, Suit.hearts];
-    for (let i: number = 1; i < 13; i++) {
+    for (let i: number = 1; i <= 13; i++) {
       for (let i2 in suits) {
         this.state.cardStates.push(new CardState(i, suits[i2], true));
         this.state.cards.push(
-          <Card cardState={this.state.cardStates[this.state.cardStates.length-1]} onClick={() => { this.shuffle(); }}></Card>
+          <Card key={c} cardState={this.state.cardStates[this.state.cardStates.length - 1]} onClick={() => { this.flipCard(c) }}>
+          </Card>
         );
+        c++;
       }
-      c++;
     }
   }
 
+  flipCard(cardId:number) {
+    let newState: boolean = !this.state.cardStates[cardId].faceUp;
+    this.state.cardStates[cardId].faceUp = newState;
+    this.setState({
+      "cardStates": this.state.cardStates
+    });
+  }
+
   componentDidMount() {
-    console.log(this.cards[0].props.CardState );
   }
 
   shuffle() {
-    console.log("shuffling");
     this.state.cardStates.sort(() => Math.random() - 0.5);
     this.setState({
       "cardStates": this.state.cardStates
@@ -39,15 +46,10 @@ export class Game extends React.Component<IGameProps, IGameState> {
   }
   
   render() {
-    let c: number = 0;
-    let suits: Suit[] = [Suit.spades, Suit.diamonds, Suit.clubs, Suit.hearts];
-    for (let i: number = 1; i < 13; i++) {
-      for (let i2 in suits) {
-        this.state.cards[c] = (
-          <Card key={c} cardState={this.state.cardStates[c]} onClick={() => { this.shuffle(); }}></Card>
-        );
-        c++;
-      }
+    for (let i: number = 0; i < this.state.cardStates.length; i++) {
+      this.state.cards[i] = (
+        <Card key={i} cardState={this.state.cardStates[i]} onClick={()=>{this.flipCard(i)}}></Card>
+      );
     }
     return (
       <div>

@@ -6,7 +6,7 @@ export class CardState implements ICardState {
   suit: any = Suit.spades;
   faceUp: boolean;
 
-  constructor(value:number=1, suit=Suit.spades, faceUp:boolean) {
+  constructor(value:number=1, suit=Suit.spades, faceUp:boolean=true) {
     this.value = value;
     this.suit = suit;
     this.faceUp = faceUp;

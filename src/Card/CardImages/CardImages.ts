@@ -13,18 +13,18 @@ export class CardImages {
     switch (value) {
       case 1:
         return "ace";
-      case 10:
-        return "jack";
       case 11:
-        return "queen";
+        return "jack";
       case 12:
+        return "queen";
+      case 13:
         return "king";
       default:
         return value.toString();
     }
   }
   getImage(value: number, suit: Suit) {
-    let two:string = [10, 11, 12].indexOf(value) >= 0 ? "2" : "";
+    let two:string = [11, 12, 13].indexOf(value) >= 0 ? "2" : "";
     let path = "./" + this.valueToFaceCard(value) + "_of_" + suit + two + ".svg";
     return svgs[path];
   }
