@@ -1,5 +1,6 @@
 import { CardState } from '../Card/CardState';
 export interface IGameState {
   cards: JSX.Element[];
-  cardStates: CardState[]
+  cardStates: CardState[],
+  playerTurn: number
 }

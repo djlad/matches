@@ -24,7 +24,7 @@ export class Card extends React.Component<ICardProps, ICardState> {
     });
     return (
     <div className="card-container">
-        <div className={classes} onClick={this.props.onClick}>
+        <div className={classes} onClick={this.props.cardState.removed ? () => { } : this.props.onClick}>
         <div className="flip-card-inner">
           <div className="flip-card-front">
             <img src={this.backSrc} alt="" className="flip-card-img"/>
