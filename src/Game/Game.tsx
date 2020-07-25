@@ -7,35 +7,109 @@ import { Suit } from '../Card/Suit';
 import { CardState } from '../Card/CardState';
 import { Round } from '../Round/Round';
 import { Player } from '../Player/Player';
+import { Scores } from '../Scores/Scores';
+import { connect, MqttClient } from 'mqtt';
+import { Topic } from './Topic';
+
 export class Game extends React.Component<IGameProps, IGameState> {
   private cards: JSX.Element[]=[];
   round: Round;
   flippedCards: number[] = [-1, -1];
   player: Player;
   incorrectFlip: boolean = false;
+  client: MqttClient;
+  topic: Topic;
   
-  constructor(props:IGameProps) {
+  constructor(props: IGameProps) {
     super(props);
     this.player = new Player("Daniel");
-    this.round = new Round([this.player, new Player("Alzina")]);
+    this.round = new Round([this.player]);
     this.state = {
       "cards": this.cards,
       "cardStates": [],
       "playerTurn": 0
     };
-    let suits: Suit[] = [Suit.spades, Suit.diamonds, Suit.clubs, Suit.hearts];
+    const suits: Suit[] = [Suit.spades, Suit.diamonds, Suit.clubs, Suit.hearts];
     for (let i: number = 1; i <= 13; i++) {
-      for (let i2 in suits) {
+      for (const i2 in suits) {
         this.state.cardStates.push(new CardState(i, suits[i2], false));
       }
     }
+    const baseTopic: string = "matchesgame/1234";
+    this.topic = new Topic(baseTopic);
+    this.client = connect("ws://test.mosquitto.org", {"port": 8081});
+    // this.client = connect("ws://matchesmqtt.azurewebsites.net/", { "port": 80});
+  }
+  componentDidMount() {
+    // this.player = new Player(window.prompt("What is your name?") ?? "Daniel");
+    this.connectMqtt(this.topic.baseTopic);
+    this.client.publish(this.topic.joinGame, JSON.stringify(this.player));
+  }
+
+  private connectMqtt(baseTopic: string) {
+    this.client.subscribe(this.topic.baseTopic);
+    this.client.subscribe(this.topic.joinGame);
+    this.client.subscribe(this.topic.oldPlayers);
+    this.client.subscribe(this.topic.pickCard);
+    this.client.on("message", (topic: string, message: Buffer) => {
+      switch (topic) {
+        case this.topic.joinGame:
+          this.handleNewPlayer(topic, message.toString());
+          break;
+        case this.topic.oldPlayers:
+          this.handleOldPlayers(topic, message.toString());
+          break;
+        case this.topic.pickCard:
+          this.handlePickCard(topic, message.toString())
+          break;
+      }
+    })
   }
 
   private getCardById(cardId: number): CardState {
     return this.state.cardStates[cardId];
   }
 
-  pickCard(cardId: number) {
+  handleNewPlayer = (topic: string, message: string) => {
+    console.log("handle new player");
+    this.round.players = [];
+    this.client.publish(this.topic.oldPlayers, JSON.stringify(this.player));
+  }
+
+  handleOldPlayers = (topic: string, message: string) => {
+    const parsed: Player = JSON.parse(message);
+    const oldPlayer: Player = new Player(parsed.name);
+    oldPlayer.created = parsed.created;
+    oldPlayer.score = parsed.score;
+    for (let i = 0; i < this.round.players.length; i++) {
+      if (this.round.players[i].equals(oldPlayer)) {
+        return;
+      }
+    }
+    this.round.addPlayer(oldPlayer);
+  }
+
+  handlePickCard = (topic: string, message: string) => {
+    const playerPicker: Player = JSON.parse(message);
+    if (this.player.equals(playerPicker)) return;
+    this.pickCard(playerPicker.lastPickedCard, true, playerPicker);
+  }
+
+  pickCard(cardId: number, fromRemote: boolean = false, playerThatPicked=this.player) {
+    console.log("picking card: " + cardId);
+    // const currentPlayer: Player = this.round.getCurrentTurnPlayer();
+    const currentPlayer: Player = playerThatPicked;
+    if (fromRemote) {
+      if (this.player.created === currentPlayer.created) {
+        return;
+      }
+    } else {
+      currentPlayer.lastPickedCard = cardId;
+      if (this.player.created === currentPlayer.created) {
+        console.log("published");
+        this.client.publish(this.topic.pickCard, JSON.stringify(currentPlayer));
+      }
+    }
     if (this.incorrectFlip) {
       this.flipCard(this.flippedCards[0]);
       this.flipCard(this.flippedCards[1]);
@@ -89,12 +163,10 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     return (
       <div>
-        <h3>{this.round.players[this.state.playerTurn].name} turn</h3>
-        {this.round.players.map((player: Player) => {
-          return <h5 key={player.name}>{player.name}: {player.score}</h5>;
-        })}
+        <h3>{this.round.players[this.state.playerTurn].name} turn {this.round.getCurrentTurnPlayer().created === this.player.created ? "(you)": ""}</h3>
+        <Scores players={this.round.players}></Scores>
         <button onClick={this.shuffle}>Shuffle</button>
-        <div>
+        <div className="card-table">
           {this.state.cards}
         </div>
       </div>

@@ -1,0 +1,11 @@
+.score {
+    /* float: left; */
+    display: inline-block;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.scores {
+    display: block;
+    clear: right;
+}

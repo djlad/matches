@@ -5,9 +5,17 @@ export class Round {
   turn: number = 0;
   pickedCard: CardState = new CardState();
   wasPicked: boolean = false;
+  created: number = Date.now();
 
   constructor(players: Player[]) {
     this.players = players;
+  }
+  
+  addPlayer(oldPlayer: Player) {
+    this.players.push(oldPlayer);
+    this.players.sort((p1, p2) => {
+      return p1.created - p2.created;
+    });
   }
 
   pickCard(card: CardState) {
@@ -28,6 +36,10 @@ export class Round {
     }
     this.endTurn();
     return false;
+  }
+  
+  getCurrentTurnPlayer(): Player {
+    return this.players[this.turn];
   }
   
   endTurn() {

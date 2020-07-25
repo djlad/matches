@@ -6,3 +6,7 @@
     width: 100px;
     height: 150px;
 }
+
+.card-table {
+    display: block
+}
