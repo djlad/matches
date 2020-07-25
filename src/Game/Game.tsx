@@ -51,6 +51,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     this.client.subscribe(this.topic.joinGame);
     this.client.subscribe(this.topic.oldPlayers);
     this.client.subscribe(this.topic.pickCard);
+    this.client.subscribe(this.topic.shuffle);
     this.client.on("message", (topic: string, message: Buffer) => {
       switch (topic) {
         case this.topic.joinGame:
@@ -60,7 +61,10 @@ export class Game extends React.Component<IGameProps, IGameState> {
           this.handleOldPlayers(topic, message.toString());
           break;
         case this.topic.pickCard:
-          this.handlePickCard(topic, message.toString())
+          this.handlePickCard(topic, message.toString());
+          break;
+        case this.topic.shuffle:
+          this.handleShuffle(topic, message.toString());
           break;
       }
     })
@@ -93,6 +97,13 @@ export class Game extends React.Component<IGameProps, IGameState> {
     const playerPicker: Player = JSON.parse(message);
     if (this.player.equals(playerPicker)) return;
     this.pickCard(playerPicker.lastPickedCard, true, playerPicker);
+  }
+
+  handleShuffle = (topic: string, message: string) => {
+    const newCardStates: CardState[] = JSON.parse(message);
+    this.setState({
+      "cardStates": newCardStates
+    });
   }
 
   pickCard(cardId: number, fromRemote: boolean = false, playerThatPicked=this.player) {
@@ -151,6 +162,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     this.setState({
       "cardStates": this.state.cardStates
     });
+    this.client.publish(this.topic.shuffle, JSON.stringify(this.state.cardStates));
   }
   
   render() {
