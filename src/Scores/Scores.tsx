@@ -7,7 +7,7 @@ export class Scores extends React.Component<IScoreState> {
   render() {
     return <div className="scores">
       {this.props.players.map((player: Player) => {
-        return <h5 className="score" key={player.created}>{player.name}: {player.score} {player.created}</h5>;
+        return <h5 className="score" key={player.created}>{player.name}: {player.score}</h5>;
         })}
       </div>
   }

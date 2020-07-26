@@ -76,8 +76,9 @@ export class Game extends React.Component<IGameProps, IGameState> {
 
   handleNewPlayer = (topic: string, message: string) => {
     console.log("handle new player");
-    this.round.players = [];
+    this.round.players = [this.player];
     this.client.publish(this.topic.oldPlayers, JSON.stringify(this.player));
+    // this.client.publish(this.topic.shuffle, JSON.stringify(this.state.cardStates));
   }
 
   handleOldPlayers = (topic: string, message: string) => {
@@ -91,6 +92,8 @@ export class Game extends React.Component<IGameProps, IGameState> {
       }
     }
     this.round.addPlayer(oldPlayer);
+    console.log("setting state");
+    this.setState({});
   }
 
   handlePickCard = (topic: string, message: string) => {
@@ -110,14 +113,11 @@ export class Game extends React.Component<IGameProps, IGameState> {
     console.log("picking card: " + cardId);
     // const currentPlayer: Player = this.round.getCurrentTurnPlayer();
     const currentPlayer: Player = playerThatPicked;
-    if (fromRemote) {
-      if (this.player.created === currentPlayer.created) {
-        return;
-      }
+    if (fromRemote && this.player.created === currentPlayer.created) {
+      return;
     } else {
       currentPlayer.lastPickedCard = cardId;
       if (this.player.created === currentPlayer.created) {
-        console.log("published");
         this.client.publish(this.topic.pickCard, JSON.stringify(currentPlayer));
       }
     }
@@ -175,7 +175,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     return (
       <div>
-        <h3>{this.round.players[this.state.playerTurn].name} turn {this.round.getCurrentTurnPlayer().created === this.player.created ? "(you)": ""}</h3>
+        <h3>{this.round.getCurrentTurnPlayer()?.name} turn {this.round.getCurrentTurnPlayer()?.created === this.player?.created ? "(you)": ""}</h3>
         <Scores players={this.round.players}></Scores>
         <button onClick={this.shuffle}>Shuffle</button>
         <div className="card-table">
