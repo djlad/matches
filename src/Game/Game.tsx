@@ -10,6 +10,7 @@ import { Player } from '../Player/Player';
 import { Scores } from '../Scores/Scores';
 import { connect, MqttClient } from 'mqtt';
 import { Topic } from './Topic';
+import { FiEdit } from 'react-icons/fi';
 
 export class Game extends React.Component<IGameProps, IGameState> {
   private cards: JSX.Element[]=[];
@@ -109,6 +110,13 @@ export class Game extends React.Component<IGameProps, IGameState> {
     });
   }
 
+  handleChangeName = () => {
+    this.player.name = prompt("What is your name?") ?? "Daniel";
+    this.client.publish(this.topic.joinGame, JSON.stringify(this.player));
+    this.client.publish(this.topic.oldPlayers, JSON.stringify(this.player));
+    this.setState({});
+  }
+
   pickCard(cardId: number, fromRemote: boolean = false, playerThatPicked=this.player) {
     console.log("picking card: " + cardId);
     // const currentPlayer: Player = this.round.getCurrentTurnPlayer();
@@ -175,7 +183,10 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     return (
       <div>
-        <h3>{this.round.getCurrentTurnPlayer()?.name} turn {this.round.getCurrentTurnPlayer()?.created === this.player?.created ? "(you)": ""}</h3>
+        <div className="player-name-display">
+          <h3 className="lefters">{this.round.getCurrentTurnPlayer()?.name} {this.round.getCurrentTurnPlayer()?.created === this.player?.created ? "(you)" : ""}</h3>
+          <FiEdit className="edit-button" onClick={this.handleChangeName}>Change Name</FiEdit>
+        </div>
         <Scores players={this.round.players}></Scores>
         <button onClick={this.shuffle}>Shuffle</button>
         <div className="card-table">

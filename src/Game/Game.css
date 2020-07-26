@@ -8,5 +8,22 @@
 }
 
 .card-table {
-    display: block
+    display: block;
+}
+
+.lefters {
+    display: inline-block;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.edit-button {
+    display: inline-block;
+    width: .8%;
+    height: .8%;
+}
+
+.edit-button:hover {
+    display: inline-block;
+    color: grey;
 }
