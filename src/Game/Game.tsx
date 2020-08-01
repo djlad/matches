@@ -38,7 +38,12 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     const baseTopic: string = "matchesgame/1234";
     this.topic = new Topic(baseTopic);
-    this.client = connect("ws://test.mosquitto.org", {"port": 8081});
+    // const mqttUrl: string = "ws://test.mosquitto.org/";
+    // const mqttUrl: string = "ws://localhost";
+    const mqttUrl: string = "ws://pairs.azurewebsites.net/";
+    const port: number = 80;
+    console.log("connecting to " + mqttUrl);
+    this.client = connect(mqttUrl, {"port": port});
     // this.client = connect("ws://matchesmqtt.azurewebsites.net/", { "port": 80});
   }
   componentDidMount() {

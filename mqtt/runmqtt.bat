@@ -1,0 +1,1 @@
+docker run -p 21883:1883 -p 80:80 --name mqttw -v mosquitto.conf:/mosquitto/config/mosquitto2.conf mqttw
