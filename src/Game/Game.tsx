@@ -99,9 +99,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     this.round.addPlayer(oldPlayer);
     console.log("setting state");
-    this.setState({
-      "cardStates":this.state.cardStates
-    });
+    this.setState({});
   }
 
   handlePickCard = (topic: string, message: string) => {
