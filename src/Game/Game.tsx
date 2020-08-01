@@ -40,7 +40,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     this.topic = new Topic(baseTopic);
     // const mqttUrl: string = "ws://test.mosquitto.org/";
     // const mqttUrl: string = "ws://localhost";
-    const mqttUrl: string = "ws://pairs.azurewebsites.net/";
+    const mqttUrl: string = "ws://pairs.azurewebsites.net";
     const port: number = 80;
     console.log("connecting to " + mqttUrl);
     this.client = connect(mqttUrl, {"port": port});
@@ -99,7 +99,9 @@ export class Game extends React.Component<IGameProps, IGameState> {
     }
     this.round.addPlayer(oldPlayer);
     console.log("setting state");
-    this.setState({});
+    this.setState({
+      "cardStates":this.state.cardStates
+    });
   }
 
   handlePickCard = (topic: string, message: string) => {

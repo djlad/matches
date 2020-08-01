@@ -1,1 +1,1 @@
-docker run --name pairs -d -p 80:80 pairs
+docker run --name pairs -p 80:80 djlad/pairs
