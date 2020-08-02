@@ -3,7 +3,7 @@ import './App.css';
 import { Game } from './Game/Game';
 
 function App() {
-  const version: string = "0.1";
+  const version: string = "0.2";
   console.log("version: " + version);
   return (
     <div className="App">

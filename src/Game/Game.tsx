@@ -41,7 +41,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     // const mqttUrl: string = "ws://test.mosquitto.org/";
     // const mqttUrl: string = "ws://localhost";
     const mqttUrl: string = "ws://pairs.azurewebsites.net";
-    const port: number = 80;
+    const port: number = 443;
     console.log("connecting to " + mqttUrl);
     this.client = connect(mqttUrl, {"port": port});
     // this.client = connect("ws://matchesmqtt.azurewebsites.net/", { "port": 80});
