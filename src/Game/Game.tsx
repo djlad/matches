@@ -40,11 +40,11 @@ export class Game extends React.Component<IGameProps, IGameState> {
     this.topic = new Topic(baseTopic);
     // const mqttUrl: string = "ws://test.mosquitto.org/";
     // const mqttUrl: string = "ws://localhost";
-    const mqttUrl: string = "ws://pairs.azurewebsites.net";
-    const port: number = 443;
-    console.log("connecting to " + mqttUrl);
+    // const mqttUrl: string = "ws://pairs.azurewebsites.net";
+    const mqttUrl: string = "https://matchesmqtt.azurewebsites.net";
+    const port: number = 80;
+    console.log("connecting to " + mqttUrl + ":" + port.toString());
     this.client = connect(mqttUrl, {"port": port});
-    // this.client = connect("ws://matchesmqtt.azurewebsites.net/", { "port": 80});
   }
   componentDidMount() {
     // this.player = new Player(window.prompt("What is your name?") ?? "Daniel");
@@ -84,7 +84,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
     console.log("handle new player");
     this.round.players = [this.player];
     this.client.publish(this.topic.oldPlayers, JSON.stringify(this.player));
-    // this.client.publish(this.topic.shuffle, JSON.stringify(this.state.cardStates));
+    this.client.publish(this.topic.shuffle, JSON.stringify(this.state.cardStates));
   }
 
   handleOldPlayers = (topic: string, message: string) => {
@@ -135,9 +135,7 @@ export class Game extends React.Component<IGameProps, IGameState> {
       }
     }
     if (this.incorrectFlip) {
-      this.flipCard(this.flippedCards[0]);
-      this.flipCard(this.flippedCards[1]);
-      this.incorrectFlip = false;
+      // this.unflipCards();
     } else if (!this.round.wasPicked) {
       this.flippedCards[0] = cardId;
       this.flipCard(cardId);
@@ -153,8 +151,20 @@ export class Game extends React.Component<IGameProps, IGameState> {
       } else {
         this.incorrectFlip = true;
         this.flippedCards[1] = cardId;
+        setTimeout(this.unflipCards, 1000);
       }
     }
+    this.setPlayerTurnState();
+  }
+
+  unflipCards = () => {
+    this.flipCard(this.flippedCards[0]);
+    this.flipCard(this.flippedCards[1]);
+    this.incorrectFlip = false;
+    this.setPlayerTurnState();
+  }
+
+  setPlayerTurnState() {
     if (this.round.turn !== this.state.playerTurn) {
       this.setState({
         "playerTurn": this.round.turn
