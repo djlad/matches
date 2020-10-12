@@ -5,6 +5,8 @@ export class Round {
   turn: number = 0;
   pickedCard: CardState = new CardState();
   wasPicked: boolean = false;
+  cardStates: CardState[] = [];
+  playerTurn: number = 0;
   created: number = Date.now();
 
   constructor(players: Player[]) {
